@@ -1,0 +1,1 @@
+SSID/Password im EEPROM speichern => wifi_host_core
