@@ -64,10 +64,6 @@ void setupWebserver(void)
   //Local intialization. Once its business is done, there is no need to keep it around
   WiFiManager wifiManager;
 
-  //DEBUG reset saved settings
-  Serial.println("Resetting Settings"); //TODO remove when wifi is done
-  wifiManager.resetSettings();          //TODO remove when wifi is done
-
   //fetches ssid and pass from eeprom and tries to connect
   //if it does not connect it starts an access point with the specified name
   //here  "AutoConnectAP"

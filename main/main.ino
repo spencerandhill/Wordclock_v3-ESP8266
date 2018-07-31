@@ -27,9 +27,6 @@ void setup() {
 
   //Setup Webserver-Modul Stuff
   setupWebserver();
-  
-  //DEBUG
-  
 
   //Setup NTP Stuff for syncing time from the internet (this must be done after
   //Webserver initialization as the wifi connection isn't available earlier)
