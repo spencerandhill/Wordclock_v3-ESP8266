@@ -57,7 +57,7 @@ void startNtpSyncing(void) {
     Serial.println(currentTimeServer);    
 
     NTP.begin(currentTimeServer, 1, true);
-	NTP.setInterval(63);                //This will be changed automatically to 30 minutes after first sync is achieved
+	NTP.setInterval(10, 1800); //This will change the interval automatically to 30 minutes after first sync is achieved
 
     Serial.println("NTP syncing started");
 }

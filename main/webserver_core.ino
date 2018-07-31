@@ -18,7 +18,8 @@
 
 //FASTLED_USING_NAMESPACE
 
-extern "C" {
+extern "C"
+{
 #include "user_interface.h"
 }
 
@@ -26,13 +27,8 @@ extern "C" {
 #include <ESP8266WebServer.h>
 #include <FS.h>
 #include <EEPROM.h>
-
-// Wi-Fi network to connect to (if not in AP mode)
-//const char *ssid = "Rathmer-Heimnetz";
-//const char *password = "RATHMER48703STADTLOHN";
-
-const char *ssid = "Campuswoche2017";
-const char *password = "Campuswoche";
+#include <DNSServer.h>
+#include <WiFiManager.h> //https://github.com/tzapu/WiFiManager
 
 ESP8266WebServer server(80);
 
@@ -41,7 +37,6 @@ ESP8266WebServer server(80);
 uint8_t currentTimeServerIndex = 1; // Index number of which timeServer is current
 
 uint8_t manualTime = 0;
-uint8_t currentWifiTimeOutRuns = 0; //This is for the setup-detection if wifi is connected properly. see wifiTimedOut()
 
 typedef struct
 {
@@ -63,7 +58,28 @@ const uint8_t timeServerCount = ARRAY_SIZE(timeServers);
 
 void setupWebserver(void)
 {
-  Serial.println("Setup Webserver");
+  Serial.printf("Configuring WiFi");
+
+  //WiFiManager: Handles automatic WiFi Connection if available or creates an AP, if not
+  //Local intialization. Once its business is done, there is no need to keep it around
+  WiFiManager wifiManager;
+
+  //DEBUG reset saved settings
+  Serial.println("Resetting Settings"); //TODO remove when wifi is done
+  wifiManager.resetSettings();          //TODO remove when wifi is done
+
+  //fetches ssid and pass from eeprom and tries to connect
+  //if it does not connect it starts an access point with the specified name
+  //here  "AutoConnectAP"
+  //and goes into a blocking loop awaiting configuration
+  Serial.println("autoConnect");
+  String generatedSSID = "LR Wordclock " + String(ESP.getChipId());
+  wifiManager.autoConnect(generatedSSID.c_str());
+
+  Serial.print("Connected! Open http://");
+  Serial.print(WiFi.localIP());
+  Serial.println(" in your browser");
+  Serial.println("WiFi successful configured");
 
   Serial.println("EEPROM Begin");
   EEPROM.begin(512);
@@ -83,30 +99,8 @@ void setupWebserver(void)
     Serial.printf("\n");
   }
 
-  Serial.printf("Configure WiFi");
-  
-  WiFi.mode(WIFI_STA);
-  Serial.printf("Connecting to %s", ssid);
-  if (String(WiFi.SSID()) != String(ssid))
-  {
-    WiFi.begin(ssid, password);
-    Serial.print(".");
-  }
-  Serial.print("\n");
-
-  Serial.println("Waiting for Connection to come up");
-  while (WiFi.status() != WL_CONNECTED && !wifiTimedOut())
-  {
-    delay(1000);
-    Serial.print(".");
-  }
-  Serial.print("\n");
-
-  Serial.print("Connected! Open http://");
-  Serial.print(WiFi.localIP());
-  Serial.println(" in your browser");
-
   //Define URL's for interface
+  Serial.println("Setting up Webserver");
   Serial.println("Define Interface URL's");
   server.on("/all", HTTP_GET, []() {
     sendAll();
@@ -231,7 +225,6 @@ void setupWebserver(void)
   server.serveStatic("/js", SPIFFS, "/js");
   server.serveStatic("/css", SPIFFS, "/css", "max-age=86400");
   server.serveStatic("/images", SPIFFS, "/images", "max-age=86400");
-  server.serveStatic("/wifisetup", SPIFFS, "/wifisetup.htm");
   Serial.println("Static server files configured");
 
   //Start server
@@ -239,19 +232,6 @@ void setupWebserver(void)
   server.begin();
 
   Serial.println("HTTP server started");
-}
-
-boolean wifiTimedOut(void)
-{
-  if (currentWifiTimeOutRuns >= SETUP_TIMEOUT_SECONDS_TO_WAIT)
-  {
-    return true;
-  }
-  else
-  {
-    currentWifiTimeOutRuns++;
-    return false;
-  }
 }
 
 void loopWebserver(void)
@@ -332,7 +312,6 @@ void sendUserTime()
 {
 
   server.sendHeader("Access-Control-Allow-Origin", "*");
-    
 
   String json = "{";
   json += "\"hours\":" + String(receiveHour());
@@ -419,7 +398,7 @@ void setSolidColor(uint8_t r, uint8_t g, uint8_t b)
 
 void setUserTime(uint8_t hours, uint8_t minutes)
 {
-  setTime(hours,minutes,0,1,1,2017);  //We don't care about the date
+  setTime(hours, minutes, 0, 1, 1, 2017); //We don't care about the date
 
   calculateLEDsToSet(receiveMinute(), receiveHour());
 }
@@ -440,7 +419,7 @@ void adjustTimeServer(bool up)
 
   EEPROM.write(1, currentTimeServerIndex);
   EEPROM.commit();
-  
+
   calculateLEDsToSet(receiveMinute(), receiveHour());
 }
 
@@ -501,17 +480,19 @@ void setBrightness(int value)
 
   EEPROM.write(0, LED_BRIGHTNESS);
   EEPROM.commit();
-  
+
   calculateLEDsToSet(receiveMinute(), receiveHour());
 }
 
-boolean ntpSyncIsActive(void) {
-  if(manualTime == 0)
+boolean ntpSyncIsActive(void)
+{
+  if (manualTime == 0)
     return true;
   else
     return false;
 }
 
-String getCurrentTimeserverURL(void) {
+String getCurrentTimeserverURL(void)
+{
   return timeServers[currentTimeServerIndex].timeServerURL;
 }

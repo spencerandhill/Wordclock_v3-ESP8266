@@ -59,14 +59,6 @@ $("#btnPowerOff").click(function() {
   setPower(0);
 });
 
-$("#btnSaveWifiSettings").click(function() {
-	saveWifiSettings();
-});
-
-$("#btnResetWifiSettings").click(function() {
-	resetWifiSettings();
-});
-
 $("#inputBrightness").on("change mousemove", function() {
    $("#spanBrightness").html($(this).val());
 });
@@ -214,25 +206,6 @@ function updateManualUserTime(value) {
 function updateUserTime(hours, minutes) {
     $("#inputUserTime").attr("value", oneLeadingZero(hours) + ":" + oneLeadingZero(minutes));
     $("#timeField").attr("value", oneLeadingZero(hours) + ":" + oneLeadingZero(minutes));
-}
-
-function saveWifiSettings() {
-  var wifiSSID = $("#wifiSSIDField").val();
-  var wifiPassword = $("#wifiPasswordField").val();
-
-  $.post(urlBase + "saveWifiSettings?ssid=" + wifiSSID + "&password=" + wifiPassword, function(data) {
-	updateWifiSettings(data);
-  });
-}
-
-function updateWifiSettings (data) {
-    $("#wifiSSIDField").val(data.wifiSSID);
-    $("#wifiPasswordField").val(data.wifiPassword);	
-}
-
-function resetWifiSettings() {
-    $("#wifiSSIDField").val("");
-    $("#wifiPasswordField").val("");	
 }
 
 function oneLeadingZero(num) {
