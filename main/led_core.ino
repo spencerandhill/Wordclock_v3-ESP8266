@@ -63,170 +63,193 @@ void calculateLEDsToSet(int minutes, int hours) {
   calculateHourLEDs(calculatedHour);
   calculateDotLEDS(minutes);
 
-  if(minutes < 5 ) {        //if we have less than 5 minutes (no special words for the minutes) show "Uhr"
+  if (minutes < 5)
+  { //if we have less than 5 minutes (no special word for the minutes) show "Uhr"
     setLEDs(LED_WORD_UHR);
-
-    //special case for 1 o'clock. If we have no special word for the minutes, remove the 's' from 'Eins'
-    strip.SetPixelColor(62, RgbColor(0,0,0)); //this is the 's' from 'eins'
   }
 }
 
-int calculateMinuteLEDsAndGetHour(int minutes, int hours) {
-  if (minutes < 5) {
+int calculateMinuteLEDsAndGetHour(int minutes, int hours)
+{
+  if (minutes < 5)
+  {
     return hours;
   }
 
-  if (minutes < 10) {
+  if (minutes < 10)
+  {
     setLEDs(LED_WORD_FUENF);
     setLEDs(LED_WORD_NACH);
     return hours;
   }
 
-  if (minutes < 15) {
+  if (minutes < 15)
+  {
     setLEDs(LED_WORD_ZEHN);
     setLEDs(LED_WORD_NACH);
     return hours;
   }
 
-  if (minutes < 20) {
+  if (minutes < 20)
+  {
     setLEDs(LED_WORD_VIERTEL);
     setLEDs(LED_WORD_NACH);
     return hours;
   }
 
-  if (minutes < 25) {
+  if (minutes < 25)
+  {
     setLEDs(LED_WORD_ZWANZIG);
     setLEDs(LED_WORD_NACH);
     return hours;
   }
 
-  if (minutes < 30) {
+  if (minutes < 30)
+  {
     setLEDs(LED_WORD_FUENF);
     setLEDs(LED_WORD_VOR);
     setLEDs(LED_WORD_HALB);
     return hours + 1;
   }
 
-  if (minutes < 35) {
+  if (minutes < 35)
+  {
     setLEDs(LED_WORD_HALB);
     return hours + 1;
   }
 
-  if (minutes < 40) {
+  if (minutes < 40)
+  {
     setLEDs(LED_WORD_FUENF);
     setLEDs(LED_WORD_NACH);
     setLEDs(LED_WORD_HALB);
     return hours + 1;
   }
 
-  if (minutes < 45) {
+  if (minutes < 45)
+  {
     setLEDs(LED_WORD_ZWANZIG);
     setLEDs(LED_WORD_VOR);
     return hours + 1;
   }
 
-  if (minutes < 50) {
+  if (minutes < 50)
+  {
     setLEDs(LED_WORD_VIERTEL);
     setLEDs(LED_WORD_VOR);
     return hours + 1;
   }
 
-  if (minutes < 55) {
+  if (minutes < 55)
+  {
     setLEDs(LED_WORD_ZEHN);
     setLEDs(LED_WORD_VOR);
     return hours + 1;
   }
-  else {
+  else
+  {
     setLEDs(LED_WORD_FUENF);
     setLEDs(LED_WORD_VOR);
     return hours + 1;
   }
 }
 
-void calculateHourLEDs(int calculatedHour) {
-  if (calculatedHour  == 0 || calculatedHour == 12 || calculatedHour == 24) {
+void calculateHourLEDs(int calculatedHour)
+{
+  if (calculatedHour == 0 || calculatedHour == 12 || calculatedHour == 24)
+  {
     setLEDs(LED_WORD_ZWOELF_S);
     return;
   }
-  if (calculatedHour  == 1 || calculatedHour == 13) {
+  if (calculatedHour == 1 || calculatedHour == 13)
+  {
     setLEDs(LED_WORD_EINS_S);
     return;
   }
-  if (calculatedHour  == 2 || calculatedHour == 14) {
+  if (calculatedHour == 2 || calculatedHour == 14)
+  {
     setLEDs(LED_WORD_ZWEI_S);
     return;
   }
-  if (calculatedHour  == 3 || calculatedHour == 15) {
+  if (calculatedHour == 3 || calculatedHour == 15)
+  {
     setLEDs(LED_WORD_DREI_S);
     return;
   }
-  if (calculatedHour  == 4 || calculatedHour == 16) {
+  if (calculatedHour == 4 || calculatedHour == 16)
+  {
     setLEDs(LED_WORD_VIER_S);
     return;
   }
-  if (calculatedHour  == 5 || calculatedHour == 17) {
+  if (calculatedHour == 5 || calculatedHour == 17)
+  {
     setLEDs(LED_WORD_FUENF_S);
     return;
   }
-  if (calculatedHour  == 6 || calculatedHour == 18) {
+  if (calculatedHour == 6 || calculatedHour == 18)
+  {
     setLEDs(LED_WORD_SECHS_S);
     return;
   }
-  if (calculatedHour  == 7 || calculatedHour == 19) {
+  if (calculatedHour == 7 || calculatedHour == 19)
+  {
     setLEDs(LED_WORD_SIEBEN_S);
     return;
   }
-  if (calculatedHour  == 8 || calculatedHour == 20) {
+  if (calculatedHour == 8 || calculatedHour == 20)
+  {
     setLEDs(LED_WORD_ACHT_S);
     return;
   }
-  if (calculatedHour  == 9 || calculatedHour == 21) {
+  if (calculatedHour == 9 || calculatedHour == 21)
+  {
     setLEDs(LED_WORD_NEUN_S);
     return;
   }
-  if (calculatedHour  == 10 || calculatedHour == 22) {
+  if (calculatedHour == 10 || calculatedHour == 22)
+  {
     setLEDs(LED_WORD_ZEHN_S);
     return;
   }
-  if (calculatedHour  == 11 || calculatedHour == 23) {
+  if (calculatedHour == 11 || calculatedHour == 23)
+  {
     setLEDs(LED_WORD_ELF_S);
     return;
   }
 }
 
-void calculateDotLEDS(int minutes) {
+void calculateDotLEDS(int minutes)
+{
   int calculatedMinutes = minutes % 5;
 
-  if (calculatedMinutes == 1) {
+  if (calculatedMinutes == 1)
+  {
     setLEDs(LED_DOT_EINS_M);
     return;
   }
 
-  if (calculatedMinutes == 2) {
+  if (calculatedMinutes == 2)
+  {
     setLEDs(LED_DOT_ZWEI_M);
     return;
   }
 
-  if (calculatedMinutes == 3) {
+  if (calculatedMinutes == 3)
+  {
     setLEDs(LED_DOT_DREI_M);
     return;
   }
 
-  if (calculatedMinutes == 4) {
+  if (calculatedMinutes == 4)
+  {
     setLEDs(LED_DOT_VIER_M);
     return;
   }
 }
 
-
-
-
-
-
-
-
 //DEBUG MISC CAN BE REMOVED
-void debugPrintColors() {
+void debugPrintColors()
+{
   Serial.print("RED VALUE:");
   Serial.println(RED_LED);
   Serial.print("GREEN VALUE :");

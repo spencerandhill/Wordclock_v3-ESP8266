@@ -5,12 +5,14 @@
 #include <TimeLib.h>
 #include <NtpClientLib.h>
 
-#define BAUD           (115200)   // Baudrate from Arduino to Host-System
+#define BAUD (115200) // Baudrate from Arduino to Host-System
 
-void setup() {
+void setup()
+{
   // General Setup
   // Open the Serial-interface to host
-  Serial.begin(BAUD);delay(100);
+  Serial.begin(BAUD);
+  delay(100);
   Serial.setDebugOutput(true);
 
   logDebugData();
@@ -24,28 +26,32 @@ void setup() {
   Serial.print("Minutes from Time: ");
   Serial.println(receiveMinute());
 
+  Serial.println("Setting up Basic LED stuff");
+  setupLED();
 
   //Setup Webserver-Modul Stuff
   setupWebserver();
 
   //Setup NTP Stuff for syncing time from the internet (this must be done after
   //Webserver initialization as the wifi connection isn't available earlier)
-  setupNTP();       
-  
+  setupNTP();
+
+  setManualTime(1);
+  setUserTime(12, 59);
+
   //Setup LED-Modul Stuff
-  setupLED();         
   delay(1000);
 }
 
-void loop() {
-
-  loopWebserver();    //Check Webserver activities
-  loopNTP();          //NTP Event Handling. This is NO sync-trigger, but the handling of NTP result (if available)
-  loopLED();          //Get Time from RTC Module and SET the related LED's
+void loop()
+{
+  loopWebserver(); //Check Webserver activities
+  loopNTP();       //NTP Event Handling. This is NO sync-trigger, but the handling of NTP result (if available)
+  loopLED();       //Get Time from RTC Module and SET the related LED's
 }
 
-
-void logDebugData() {
+void logDebugData()
+{
   Serial.println();
   Serial.print(F("Heap: "));
   Serial.println(system_get_free_heap_size());
