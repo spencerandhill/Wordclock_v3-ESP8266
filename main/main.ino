@@ -41,9 +41,12 @@ void setup() {
 }
 
 void loop() {
+
   loopWebserver();    //Check Webserver activities
+  loopNTP();          //NTP Event Handling. This is NO sync-trigger, but the handling of NTP result (if available)
   loopLED();          //Get Time from RTC Module and SET the related LED's
 }
+
 
 void logDebugData() {
   Serial.println();

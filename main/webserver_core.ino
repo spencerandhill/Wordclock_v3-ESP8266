@@ -63,9 +63,9 @@ const uint8_t timeServerCount = ARRAY_SIZE(timeServers);
 
 void setupWebserver(void)
 {
-
   Serial.println("Setup Webserver");
 
+  Serial.println("EEPROM Begin");
   EEPROM.begin(512);
   loadSettings();
 
@@ -83,6 +83,8 @@ void setupWebserver(void)
     Serial.printf("\n");
   }
 
+  Serial.printf("Configure WiFi");
+  
   WiFi.mode(WIFI_STA);
   Serial.printf("Connecting to %s", ssid);
   if (String(WiFi.SSID()) != String(ssid))
