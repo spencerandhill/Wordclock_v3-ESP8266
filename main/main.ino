@@ -36,9 +36,6 @@ void setup()
   //Webserver initialization as the wifi connection isn't available earlier)
   setupNTP();
 
-  setManualTime(1);
-  setUserTime(12, 59);
-
   //Setup LED-Modul Stuff
   delay(1000);
 }
