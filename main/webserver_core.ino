@@ -1,35 +1,3 @@
-/*
-   ESP8266 + FastLED + IR Remote + MSGEQ7: https://github.com/jasoncoon/esp8266-fastled-webserver
-   Copyright (C) 2015 Jason Coon
-
-   This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation, either version 3 of the License, or
-   (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-//FASTLED_USING_NAMESPACE
-
-extern "C"
-{
-#include "user_interface.h"
-}
-
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-#include <FS.h>
-#include <EEPROM.h>
-#include <DNSServer.h>
-#include <WiFiManager.h> //https://github.com/tzapu/WiFiManager
-
 ESP8266WebServer server(80);
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
@@ -56,22 +24,48 @@ TimeServerAndNameList timeServers = {
 
 const uint8_t timeServerCount = ARRAY_SIZE(timeServers);
 
+void configModeCallback (WiFiManager *myWiFiManager) {
+  Serial.println("Entered config mode");
+  Serial.println(WiFi.softAPIP());
+
+  ledAnimationShowAP();
+
+  //In AP mode, disable auto reconnect
+  WiFi.setAutoReconnect (false);
+
+  Serial.println(myWiFiManager->getConfigPortalSSID());
+}
+
+void saveConfigCallback () {
+  Serial.println("Should save config");
+
+  //When WiFi Network is set, enable auto reconnect
+  WiFi.setAutoReconnect (true);
+}
+
 void setupWebserver(void)
 {
   Serial.printf("Configuring WiFi");
+  WiFi.setAutoReconnect (true); //By default this is set to true, so that a lost connection gets reconnected
 
   //WiFiManager: Handles automatic WiFi Connection if available or creates an AP, if not
   //Local intialization. Once its business is done, there is no need to keep it around
   WiFiManager wifiManager;
+
+  wifiManager.setAPCallback(configModeCallback);
+  wifiManager.setSaveConfigCallback(saveConfigCallback);
 
   //fetches ssid and pass from eeprom and tries to connect
   //if it does not connect it starts an access point with the specified name
   //here  "AutoConnectAP"
   //and goes into a blocking loop awaiting configuration
   Serial.println("autoConnect");
+  ledAnimationShowConnecting();
   String generatedSSID = "LR Wordclock " + String(ESP.getChipId());
+  wifiManager.setConnectTimeout(30);
   wifiManager.autoConnect(generatedSSID.c_str());
 
+  ledAnimationShowOnline();
   Serial.print("Connected! Open http://");
   Serial.print(WiFi.localIP());
   Serial.println(" in your browser");
@@ -482,6 +476,9 @@ void setBrightness(int value)
 
 boolean ntpSyncIsActive(void)
 {
+  Serial.print("Check, if NTP sync is active or not. Manual Time: ");
+  Serial.println(manualTime);
+
   if (manualTime == 0)
     return true;
   else

@@ -1,9 +1,21 @@
-#include <SoftwareSerial.h>
+extern "C"
+{
+#include "user_interface.h"
+}
 
+#include <SoftwareSerial.h>
 #include <NeoPixelBrightnessBus.h>
 #include <Wire.h>
 #include <TimeLib.h>
 #include <NtpClientLib.h>
+
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <FS.h>
+#include <EEPROM.h>
+#include <DNSServer.h>
+
+#include "WiFiManager.h" //https://github.com/tzapu/WiFiManager
 
 #define BAUD (115200) // Baudrate from Arduino to Host-System
 
@@ -55,7 +67,6 @@ void setup()
   ledAnimationBooting();
   delay(2000);
   
-
   //Setup Webserver-Modul Stuff
   setupWebserver();
 

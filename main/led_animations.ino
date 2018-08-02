@@ -6,6 +6,14 @@ void showDots(RgbColor color) {
     setLEDs(LED_DOT_DREI_M, color);
     setLEDs(LED_DOT_VIER_M, color);
 
+
+    RgbColor currentColor = readColor();
+    Serial.print("Current color is:");
+    Serial.print(" R: ");Serial.print(currentColor.R);
+    Serial.print(" G: ");Serial.print(currentColor.G);
+    Serial.print(" B: ");Serial.print(currentColor.B);
+    Serial.println();
+
     showStrip();
 }
 
@@ -30,7 +38,7 @@ void ledAnimationShowAP(void) {
 }
 
 void ledAnimationShowOnline(void) {
-    Serial.println("ledAnimationBootDone");
+    Serial.println("ledAnimationShowOnline");
     showDots(RgbColor(0, 255, 0));  //GREEN
 }
 

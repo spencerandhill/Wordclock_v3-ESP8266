@@ -19,9 +19,11 @@ NTPSyncEvent_t ntpEvent; // Last triggered event
 
 void setupNTP(void)
 {  
+    Serial.println("Configuring NTP");
     NTP.onNTPSyncEvent ([](NTPSyncEvent_t event) {
         ntpEvent = event;
         syncEventTriggered = true;
+        Serial.println("New NTP Time achieved");
     });
 
     controlNTPSyncing();
@@ -57,7 +59,7 @@ void startNtpSyncing(void) {
     Serial.println(currentTimeServer);    
 
     NTP.begin(currentTimeServer, 1, true);
-	NTP.setInterval(10, 1800); //This will change the interval automatically to 30 minutes after first sync is achieved
+  	NTP.setInterval(10, 1800); //This will change the interval automatically to 30 minutes after first sync is achieved
 
     Serial.println("NTP syncing started");
 }
