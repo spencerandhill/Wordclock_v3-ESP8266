@@ -5,9 +5,6 @@
 #define CHIPSET     NeoEsp8266Dma800KbpsMethod
 #define LED_PIN     14 //This is DataPin 5, aka GPIO14
 
-//#################SECTION WEBSERVER###################
-#define SETUP_TIMEOUT_SECONDS_TO_WAIT 5 //Number of Seconds to wait for wifi-connection before switching to setup-mode
-
 //#############SECTION LED WORDS AND DOTS#############
 //This is NOT the patching of the LED-output itself, this are just
 //constants to differentiate in code, which words should be activated

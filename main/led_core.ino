@@ -31,7 +31,6 @@ void setupLED() {
   strip.Begin();
   //strip.SetBrightness(LED_BRIGHTNESS);
 
-  calculateLEDsToSet(receiveMinute(), receiveHour());
   strip.Show();
   //FastLED.show();
   //debugPrintColors();
@@ -256,4 +255,8 @@ void debugPrintColors()
   Serial.println(GREEN_LED);
   Serial.print("BLUE VALUE :");
   Serial.println(BLUE_LED);
+}
+
+void showStrip() {
+  strip.Show();
 }

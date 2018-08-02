@@ -7,6 +7,28 @@
 
 #define BAUD (115200) // Baudrate from Arduino to Host-System
 
+void logDebugData()
+{
+  Serial.println();
+  Serial.print(F("Heap: "));
+  Serial.println(system_get_free_heap_size());
+  Serial.print(F("Boot Vers: "));
+  Serial.println(system_get_boot_version());
+  Serial.print(F("CPU: "));
+  Serial.println(system_get_cpu_freq());
+  Serial.print(F("SDK: "));
+  Serial.println(system_get_sdk_version());
+  Serial.print(F("Chip ID: "));
+  Serial.println(system_get_chip_id());
+  Serial.print(F("Flash ID: "));
+  Serial.println(spi_flash_get_id());
+  Serial.print(F("Flash Size: "));
+  Serial.println(ESP.getFlashChipRealSize());
+  Serial.print(F("Vcc: "));
+  Serial.println(ESP.getVcc());
+  Serial.println();
+}
+
 void setup()
 {
   // General Setup
@@ -28,6 +50,11 @@ void setup()
 
   Serial.println("Setting up Basic LED stuff");
   setupLED();
+  ledAnimationShowOffline();
+  delay(2000);
+  ledAnimationBooting();
+  delay(2000);
+  
 
   //Setup Webserver-Modul Stuff
   setupWebserver();
@@ -45,26 +72,4 @@ void loop()
   loopWebserver(); //Check Webserver activities
   loopNTP();       //NTP Event Handling. This is NO sync-trigger, but the handling of NTP result (if available)
   loopLED();       //Get Time from RTC Module and SET the related LED's
-}
-
-void logDebugData()
-{
-  Serial.println();
-  Serial.print(F("Heap: "));
-  Serial.println(system_get_free_heap_size());
-  Serial.print(F("Boot Vers: "));
-  Serial.println(system_get_boot_version());
-  Serial.print(F("CPU: "));
-  Serial.println(system_get_cpu_freq());
-  Serial.print(F("SDK: "));
-  Serial.println(system_get_sdk_version());
-  Serial.print(F("Chip ID: "));
-  Serial.println(system_get_chip_id());
-  Serial.print(F("Flash ID: "));
-  Serial.println(spi_flash_get_id());
-  Serial.print(F("Flash Size: "));
-  Serial.println(ESP.getFlashChipRealSize());
-  Serial.print(F("Vcc: "));
-  Serial.println(ESP.getVcc());
-  Serial.println();
 }

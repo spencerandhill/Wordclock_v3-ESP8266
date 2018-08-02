@@ -66,4 +66,7 @@ void stopNtpSyncing(void) {
     NTP.stop();
 
     Serial.println("NTP syncing stopped");
+
+    Serial.println("Showing Manual Time");
+    calculateLEDsToSet(receiveMinute(), receiveHour());
 }
