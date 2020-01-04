@@ -3,10 +3,26 @@
 
 //#define CHIPSET     NEOPIXEL
 #define CHIPSET     NeoEsp8266Dma800KbpsMethod
+#define LIGHTSENSORPIN A0 //Ambient light sensor reading
 #define LED_PIN     14 //This is DataPin 5, aka GPIO14
+//LED_PIN is currently not in use, as the default PIN of the LED Library "NeoPixelBrightnessBus" is used
+//The Library does use the DMA-Method (Hardware Method to output LED-signals) and therefore it uses RDX0/GPIO3 for LED output
+
+#define BRIGHTNESS_SENSOR_DELAY_PER_SECOND 150
+
+//#############SECTION EEPROM STORAGE ADDRESSES#############
+#define EEPROM_BRIGHTNESS_LOW 0
+#define EEPROM_BRIGHTNESS_HIGH 1
+#define EEPROM_SENSOR_THRESHOLD 2
+#define EEPROM_CURRENT_TIME_SERVER_INDEX 3
+#define EEPROM_RED_COLOR_VALUE 4
+#define EEPROM_GREEN_COLOR_VALUE 5
+#define EEPROM_BLUE_COLOR_VALUE 6
+#define EEPROM_LED_POWER_STATE 7
+#define EEPROM_MANUEL_TIME_STATE 8
 
 //#############SECTION LED WORDS AND DOTS#############
-//This is NOT the patching of the LED-output itself, this are just
+//This is NOT the patching of the LED-output itself, these are just
 //constants to differentiate in code, which words should be activated
 //GENERAL WORDS
 #define LED_WORD_ES 1

@@ -3,21 +3,28 @@ uint8_t RED_LED = 255;
 uint8_t GREEN_LED = 255;
 uint8_t BLUE_LED = 255;
 
-const uint8_t brightnessCount = 5;
-uint8_t brightnessMap[brightnessCount] = { 16, 32, 64, 128, 255 };
-int brightnessIndex = 0;
-uint8_t LED_BRIGHTNESS = brightnessMap[brightnessIndex];
+//RGB Values with calculated Brightness for the Color of the Clock (see sensor_brightness_core.ino)
+uint8_t RED_LED_BRIGHTNESS = 255;
+uint8_t GREEN_LED_BRIGHTNESS = 255;
+uint8_t BLUE_LED_BRIGHTNESS = 255;
+
+uint8_t userBrightnessLow = 10; //lower percentage of brightness
+uint8_t userBrightnessHigh = 100; //upper percentage of brightness
+uint16_t sensorThreshold = 40; //the threshold value where the low/high mode is flipped
 
 uint8_t LED_POWERED = 1;
 
-//CRGB leds[NUM_LEDS];
 NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(NUM_LEDS);
 
-//CRGB readColor() {
+RgbColor readColorWithBrightness() {
+  //Compute RGB Color from RED_LED_BRIGHTNESS, GREEN_LED_BRIGHTNESS, BLUE_LED_BRIGHTNESS
+  //Values and return as RGB-Value
+  return RgbColor(RED_LED_BRIGHTNESS, GREEN_LED_BRIGHTNESS, BLUE_LED_BRIGHTNESS);
+}
+
 RgbColor readColor() {
-  //Compute CRGB Color from RED_LED, GREEN_LED, BLUE_LED
-  //Values and return as CRGB-Value
-  //return CRGB(RED_LED, GREEN_LED, BLUE_LED);
+  //Compute RGB Color from RED_LED, GREEN_LED, BLUE_LED
+  //Values and return as RGB-Value
   return RgbColor(RED_LED, GREEN_LED, BLUE_LED);
 }
 
@@ -25,27 +32,27 @@ void setColor(uint8_t r, uint8_t g, uint8_t b) {
   RED_LED = r;
   GREEN_LED = g;
   BLUE_LED = b;
+
+  updateSensorBrightnessColorValues();
 }
 
 void setupLED() {
   strip.Begin();
-  //strip.SetBrightness(LED_BRIGHTNESS);
-
   strip.Show();
-  //FastLED.show();
-  //debugPrintColors();
 }
 
 void loopLED() {
-  if (hasTimeChanged()) {
-    Serial.println("Time has changed");
+  boolean brightnessHasChanged = hasSensorBrightnessChanged();
+  if(brightnessHasChanged) {
+    updateSensorBrightnessColorValues();
+  }
+
+  if (hasTimeChanged() || brightnessHasChanged) {
     calculateLEDsToSet(receiveMinute(), receiveHour());
   }
 
-  //strip.SetBrightness(LED_BRIGHTNESS);
+  //strip.setBrightness(USER_BRIGHTNESS);
   strip.Show();  
-  //FastLED.setBrightness(LED_BRIGHTNESS);
-  //FastLED.show();
 }
 
 void calculateLEDsToSet(int minutes, int hours) {

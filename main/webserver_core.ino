@@ -1,5 +1,9 @@
 ESP8266WebServer server(80);
 
+//WiFiManager: Handles automatic WiFi Connection if available or creates an AP, if not
+//Local intialization. Once its business is done, there is no need to keep it around
+WiFiManager wifiManager;
+
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof((A)[0]))
 
 uint8_t currentTimeServerIndex = 1; // Index number of which timeServer is current
@@ -48,16 +52,11 @@ void setupWebserver(void)
   Serial.printf("Configuring WiFi");
   WiFi.setAutoReconnect (true); //By default this is set to true, so that a lost connection gets reconnected
 
-  //WiFiManager: Handles automatic WiFi Connection if available or creates an AP, if not
-  //Local intialization. Once its business is done, there is no need to keep it around
-  WiFiManager wifiManager;
-
   wifiManager.setAPCallback(configModeCallback);
   wifiManager.setSaveConfigCallback(saveConfigCallback);
 
   //fetches ssid and pass from eeprom and tries to connect
   //if it does not connect it starts an access point with the specified name
-  //here  "AutoConnectAP"
   //and goes into a blocking loop awaiting configuration
   Serial.println("autoConnect");
   ledAnimationShowConnecting();
@@ -71,8 +70,15 @@ void setupWebserver(void)
   Serial.println(" in your browser");
   Serial.println("WiFi successful configured");
 
+  //Start multiDNS (mDNS)
+  if (!MDNS.begin("word.clock")) {             // Start the mDNS responder for word.clock
+    Serial.println("Error setting up MDNS responder!");
+  }
+  Serial.println("mDNS responder started");
+
   Serial.println("EEPROM Begin");
   EEPROM.begin(512);
+  initBrightnessSettings();
   loadSettings();
 
   Serial.println("Open SPIFFS");
@@ -162,6 +168,11 @@ void setupWebserver(void)
     Serial.printf("/timeServerDown triggered\n");
   });
 
+  server.on("/userTimeAndSensorValue", HTTP_GET, []() {
+    sendUserTimeAndSensorValue();
+    Serial.printf("/userTimeAndSensorValue triggered\n");
+  });
+
   server.on("/userTime", HTTP_GET, []() {
     sendUserTime();
     Serial.printf("/userTime triggered\n");
@@ -181,40 +192,62 @@ void setupWebserver(void)
     Serial.printf(", manualTime:%s\n", String(manualTime).c_str());
   });
 
-  server.on("/brightness", HTTP_GET, []() {
-    sendBrightness();
-    Serial.printf("/brightness triggered\n");
+  server.on("/brightnessLow", HTTP_GET, []() {
+    sendBrightnessLow();
+    Serial.printf("/brightnessLow triggered\n");
   });
 
-  server.on("/brightness", HTTP_POST, []() {
+  server.on("/brightnessLow", HTTP_POST, []() {
     String value = server.arg("value");
-    setBrightness(value.toInt());
-    sendBrightness();
-    Serial.printf("/brightness (POST) triggered with value: brightness:%s\n", value.c_str());
+    setBrightnessLow(value.toInt());
+    sendBrightnessLow();
+    Serial.printf("/brightnessLow (POST) triggered with value: brightnessLow:%s\n", value.c_str());
   });
 
-  server.on("/brightnessUp", HTTP_POST, []() {
-    adjustBrightness(true);
-    sendBrightness();
-    Serial.printf("/brightnessUp triggered\n");
+  server.on("/brightnessHigh", HTTP_GET, []() {
+    sendBrightnessHigh();
+    Serial.printf("/brightnessHigh triggered\n");
   });
 
-  server.on("/brightnessDown", HTTP_POST, []() {
-    adjustBrightness(false);
-    sendBrightness();
-    Serial.printf("/brightnessDown triggered\n");
+  server.on("/brightnessHigh", HTTP_POST, []() {
+    String value = server.arg("value");
+    setBrightnessHigh(value.toInt());
+    sendBrightnessHigh();
+    Serial.printf("/brightnessHigh (POST) triggered with value: brightnessHigh:%s\n", value.c_str());
+  });
+
+  server.on("/sensorThreshold", HTTP_GET, []() {
+    sendSensorThreshold();
+    Serial.printf("/sensorThreshold triggered\n");
+  });
+
+  server.on("/sensorThreshold", HTTP_POST, []() {
+    String value = server.arg("value");
+    setSensorThreshold(value.toInt());
+    sendSensorThreshold();
+    Serial.printf("/sensorThreshold (POST) triggered with value: sensorThreshold:%s\n", value.c_str());
+  });
+ 
+  server.on("/resetWifi", HTTP_GET, [](){
+    resetAllLEDs();
+//    wifiManager.resetSettings();
+
+
+    server.send(200, "text/json");
+    Serial.printf("/resetWifi triggered\n");
+    ESP.restart();
   });
 
   Serial.println("Interface URL's defined");
 
   //Static Server Files
   Serial.println("Configure static server files");
-  server.serveStatic("/", SPIFFS, "/index.htm");
-  server.serveStatic("/index.htm", SPIFFS, "/index.htm");
-  server.serveStatic("/fonts", SPIFFS, "/fonts", "max-age=86400");
-  server.serveStatic("/js", SPIFFS, "/js");
-  server.serveStatic("/css", SPIFFS, "/css", "max-age=86400");
-  server.serveStatic("/images", SPIFFS, "/images", "max-age=86400");
+  server.serveStatic("/", SPIFFS, "/index.htm", "max-age=31536000");
+  server.serveStatic("/index.htm", SPIFFS, "/index.htm", "max-age=31536000");
+  server.serveStatic("/fonts", SPIFFS, "/fonts", "max-age=31536000");
+  server.serveStatic("/js", SPIFFS, "/js", "max-age=31536000");
+  server.serveStatic("/css", SPIFFS, "/css", "max-age=31536000");
+  server.serveStatic("/images", SPIFFS, "/images", "max-age=31536000");
   Serial.println("Static server files configured");
 
   //Start server
@@ -229,29 +262,64 @@ void loopWebserver(void)
   server.handleClient();
 }
 
+void initBrightnessSettings() {
+
+  Serial.println("Checking EEPROM Settings");
+
+  uint8_t temp;
+  EEPROM.get(EEPROM_BRIGHTNESS_LOW, temp);
+  if(temp <= 0) { //Check, if the value is already set in EEPROM
+    setBrightnessLow(userBrightnessLow); //If not, initialize the value in EEPROM from userBrightnessLow
+    Serial.print("userBrightnessLow initialized to: ");
+    Serial.println(userBrightnessLow);
+  }
+
+  EEPROM.get(EEPROM_BRIGHTNESS_HIGH, temp);
+  if(temp <= 0) { //Check, if the value is already set in EEPROM
+    setBrightnessHigh(userBrightnessHigh); //If not, initialize the value in EEPROM from userBrightnessHigh
+    Serial.print("userBrightnessHigh initialized to: ");
+    Serial.println(userBrightnessHigh);
+  }
+
+  uint16_t tempThreshold;
+  EEPROM.get(EEPROM_SENSOR_THRESHOLD, tempThreshold);
+  if(tempThreshold <= 0) { //Check, if the value is already set in EEPROM
+    setSensorThreshold(sensorThreshold); //If not, initialize the value in EEPROM from sensorThreshold
+    Serial.print("sensorThreshold initialized to: ");
+    Serial.println(sensorThreshold);
+  }
+
+}
+
 void loadSettings()
 {
   Serial.println("Loading Webserver Settings");
 
-  LED_BRIGHTNESS = EEPROM.read(0);
+  EEPROM.get(EEPROM_BRIGHTNESS_LOW, userBrightnessLow);
+  EEPROM.get(EEPROM_BRIGHTNESS_HIGH, userBrightnessHigh);
+  EEPROM.get(EEPROM_SENSOR_THRESHOLD, sensorThreshold);
 
-  currentTimeServerIndex = EEPROM.read(1);
+  EEPROM.get(EEPROM_CURRENT_TIME_SERVER_INDEX, currentTimeServerIndex);
   if (currentTimeServerIndex < 0)
     currentTimeServerIndex = 0;
   else if (currentTimeServerIndex >= timeServerCount)
     currentTimeServerIndex = timeServerCount - 1;
 
-  byte r = EEPROM.read(2);
-  byte g = EEPROM.read(3);
-  byte b = EEPROM.read(4);
+  byte r;
+  byte g;
+  byte b;
+  
+  EEPROM.get(EEPROM_RED_COLOR_VALUE, r);
+  EEPROM.get(EEPROM_GREEN_COLOR_VALUE, g);
+  EEPROM.get(EEPROM_BLUE_COLOR_VALUE, b);
 
   if (r != 0 || g != 0 || b != 0)
   {
     setColor(r, g, b);
   }
 
-  LED_POWERED = EEPROM.read(5);
-  manualTime = EEPROM.read(6);
+  EEPROM.get(EEPROM_LED_POWER_STATE, LED_POWERED);
+  EEPROM.get(EEPROM_MANUEL_TIME_STATE, manualTime);
   Serial.println("Webserver Settings loaded");
 }
 
@@ -261,7 +329,10 @@ void sendAll()
 
   json += "\"power\":" + String(LED_POWERED) + ",";
   json += "\"manualTime\":" + String(manualTime) + ",";
-  json += "\"brightness\":" + String(LED_BRIGHTNESS) + ",";
+  json += "\"brightnessLow\":" + String(userBrightnessLow) + ",";
+  json += "\"brightnessHigh\":" + String(userBrightnessHigh) + ",";
+  json += "\"sensorThreshold\":" + String(sensorThreshold) + ",";
+
 
   json += "\"currentTimeServer\":{";
   json += "\"index\":" + String(currentTimeServerIndex);
@@ -298,9 +369,24 @@ void sendAll()
   json = String();
 }
 
-void sendUserTime()
+void sendUserTimeAndSensorValue()
 {
 
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+
+  String json = "{";
+  json += "\"hours\":" + String(receiveHour());
+  json += ",\"minutes\":" + String(receiveMinute());
+  json += ",\"manualTime\":" + String(manualTime);
+  json += ",\"sensorValue\":" + String((uint16_t) receiveSensorBrightness());
+  json += "}";
+  server.send(200, "text/json", json);
+  json = String();
+
+}
+
+void sendUserTime()
+{
   server.sendHeader("Access-Control-Allow-Origin", "*");
 
   String json = "{";
@@ -336,9 +422,23 @@ void sendTimeServers()
   json = String();
 }
 
-void sendBrightness()
+void sendBrightnessLow()
 {
-  String json = String(LED_BRIGHTNESS);
+  String json = String(userBrightnessLow);
+  server.send(200, "text/json", json);
+  json = String();
+}
+
+void sendBrightnessHigh()
+{
+  String json = String(userBrightnessHigh);
+  server.send(200, "text/json", json);
+  json = String();
+}
+
+void sendSensorThreshold()
+{
+  String json = String(sensorThreshold);
   server.send(200, "text/json", json);
   json = String();
 }
@@ -358,7 +458,7 @@ void setManualTime(uint8_t value)
 {
   manualTime = value == 0 ? 0 : 1;
 
-  EEPROM.write(6, manualTime);
+  EEPROM.put(EEPROM_MANUEL_TIME_STATE, manualTime);
   EEPROM.commit();
 
   controlNTPSyncing();
@@ -368,7 +468,7 @@ void setPower(uint8_t value)
 {
   LED_POWERED = value == 0 ? 0 : 1;
 
-  EEPROM.write(5, LED_POWERED);
+  EEPROM.put(EEPROM_LED_POWER_STATE, LED_POWERED);
   EEPROM.commit();
 
   calculateLEDsToSet(receiveMinute(), receiveHour());
@@ -378,9 +478,9 @@ void setSolidColor(uint8_t r, uint8_t g, uint8_t b)
 {
   setColor(r, g, b);
 
-  EEPROM.write(2, r);
-  EEPROM.write(3, g);
-  EEPROM.write(4, b);
+  EEPROM.put(EEPROM_RED_COLOR_VALUE, r);
+  EEPROM.put(EEPROM_GREEN_COLOR_VALUE, g);
+  EEPROM.put(EEPROM_BLUE_COLOR_VALUE, b);
   EEPROM.commit();
 
   calculateLEDsToSet(receiveMinute(), receiveHour());
@@ -407,7 +507,7 @@ void adjustTimeServer(bool up)
   if (currentTimeServerIndex >= timeServerCount)
     currentTimeServerIndex = 0;
 
-  EEPROM.write(1, currentTimeServerIndex);
+  EEPROM.put(EEPROM_CURRENT_TIME_SERVER_INDEX, currentTimeServerIndex);
   EEPROM.commit();
 
   calculateLEDsToSet(receiveMinute(), receiveHour());
@@ -423,54 +523,37 @@ void setTimeServer(int value)
 
   currentTimeServerIndex = value;
 
-  EEPROM.write(1, currentTimeServerIndex);
+  EEPROM.put(EEPROM_CURRENT_TIME_SERVER_INDEX, currentTimeServerIndex);
   EEPROM.commit();
 
   reloadNtpSyncing();
   calculateLEDsToSet(receiveMinute(), receiveHour());
 }
 
-// adjust the brightness, and wrap around at the ends
-void adjustBrightness(bool up)
-{
-  if (up)
-    brightnessIndex++;
-  else
-    brightnessIndex--;
-
-  // wrap around at the ends
-  if (brightnessIndex < 0)
-    brightnessIndex = brightnessCount - 1;
-  else if (brightnessIndex >= brightnessCount)
-    brightnessIndex = 0;
-
-  LED_BRIGHTNESS = brightnessMap[brightnessIndex];
-
-  //  FastLED.setBrightness(LED_BRIGHTNESS);
-  //strip.SetBrightness(LED_BRIGHTNESS);
-
-  Serial.println("Brightness adjusted: ");
-  Serial.println(String(LED_BRIGHTNESS));
-
-  setBrightness(LED_BRIGHTNESS);
+void setBrightnessLow(uint8_t receivedBrightnessLow) {
+  userBrightnessLow = receivedBrightnessLow;
+  EEPROM.put(EEPROM_BRIGHTNESS_LOW, receivedBrightnessLow);
+  EEPROM.commit();
+  
+  updateSensorBrightnessColorValues();
+  calculateLEDsToSet(receiveMinute(), receiveHour());
 }
 
-void setBrightness(int value)
-{
-  // don't wrap around at the ends
-  if (value > 255)
-    value = 255;
-  else if (value < 0)
-    value = 0;
-
-  LED_BRIGHTNESS = value;
-
-  //  FastLED.setBrightness(LED_BRIGHTNESS);
-  //strip.SetBrightness(LED_BRIGHTNESS);
-
-  EEPROM.write(0, LED_BRIGHTNESS);
+void setBrightnessHigh(uint8_t receivedBrightnessHigh) {
+  userBrightnessHigh = receivedBrightnessHigh;
+  EEPROM.put(EEPROM_BRIGHTNESS_HIGH, receivedBrightnessHigh);
   EEPROM.commit();
+  
+  updateSensorBrightnessColorValues();
+  calculateLEDsToSet(receiveMinute(), receiveHour());
+}
 
+void setSensorThreshold(uint16_t receivedThreshold) {
+  sensorThreshold = receivedThreshold;
+  EEPROM.put(EEPROM_SENSOR_THRESHOLD, receivedThreshold);
+  EEPROM.commit();
+  
+  updateSensorBrightnessColorValues();
   calculateLEDsToSet(receiveMinute(), receiveHour());
 }
 

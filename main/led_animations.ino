@@ -7,7 +7,7 @@ void showDots(RgbColor color) {
     setLEDs(LED_DOT_VIER_M, color);
 
 
-    RgbColor currentColor = readColor();
+    RgbColor currentColor = readColorWithBrightness();
     Serial.print("Current color is:");
     Serial.print(" R: ");Serial.print(currentColor.R);
     Serial.print(" G: ");Serial.print(currentColor.G);

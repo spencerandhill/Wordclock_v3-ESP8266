@@ -1,0 +1,27 @@
+filename, language, Ini, C++, HTML, CSS, XML, JavaScript, comment, blank, total
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\desktop.ini, Ini, 4, 0, 0, 0, 0, 0, 0, 1, 5
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\CONSTANTS.ino, C++, 0, 40, 0, 0, 0, 0, 12, 8, 60
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\clock_core.ino, C++, 0, 25, 0, 0, 0, 0, 0, 8, 33
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\.idea\data.iml, XML, 0, 0, 0, 0, 12, 0, 0, 0, 12
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\.idea\desktop.ini, Ini, 4, 0, 0, 0, 0, 0, 0, 1, 5
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\.idea\inspectionProfiles\desktop.ini, Ini, 4, 0, 0, 0, 0, 0, 0, 1, 5
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\.idea\misc.xml, XML, 0, 0, 0, 0, 6, 0, 0, 0, 6
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\.idea\modules.xml, XML, 0, 0, 0, 0, 8, 0, 0, 0, 8
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\.idea\vcs.xml, XML, 0, 0, 0, 0, 6, 0, 0, 0, 6
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\.idea\workspace.xml, XML, 0, 0, 0, 0, 245, 0, 0, 0, 245
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\css\clockpicker.min.css, CSS, 0, 0, 0, 1, 0, 0, 4, 0, 5
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\css\styles.css, CSS, 0, 0, 0, 230, 0, 0, 11, 35, 276
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\fonts\glyphico.svg, XML, 0, 0, 0, 0, 288, 0, 0, 0, 288
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\index.htm, HTML, 0, 0, 159, 0, 0, 0, 0, 9, 168
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\js\bootstrap.min.js, JavaScript, 0, 0, 0, 0, 0, 2, 5, 0, 7
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\js\clockpicker.min.js, JavaScript, 0, 0, 0, 0, 0, 1, 5, 0, 6
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\data\js\scripts.js, JavaScript, 0, 0, 0, 0, 0, 247, 24, 61, 332
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\desktop.ini, Ini, 4, 0, 0, 0, 0, 0, 0, 1, 5
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\led_animations.ino, C++, 0, 37, 0, 0, 0, 0, 0, 11, 48
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\led_core.ino, C++, 0, 225, 0, 0, 0, 0, 8, 37, 270
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\led_setWords.ino, C++, 0, 176, 0, 0, 0, 0, 107, 54, 337
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\main.ino, C++, 0, 65, 0, 0, 0, 0, 7, 17, 89
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\ntp_core.ino, C++, 0, 61, 0, 0, 0, 0, 1, 13, 75
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\sensor_brightness_core.ino, C++, 0, 63, 0, 0, 0, 0, 8, 18, 89
+c:\Users\Jan\Google Drive\Projekte\WordClock\03_Programmierung\Wordclock_v3-ESP8266\main\webserver_core.ino, C++, 0, 440, 0, 0, 0, 0, 19, 116, 575
+Total, -, 16, 1132, 159, 231, 565, 250, 211, 391, 2955

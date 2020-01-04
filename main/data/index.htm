@@ -6,9 +6,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LR Wordclock - ESP8266</title>
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="icon" href="images/favicon.ico">
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/minicolors.css">
   <link rel="stylesheet" type="text/css" href="css/clockpicker.min.css">
+  <link rel="icon" href="images/favicon.ico">
 </head>
 
 <body>
@@ -29,7 +30,7 @@
         </div>
         <div class="col-sm-4">
           <p id="status" class="form-control-static">Loading...</p>
-        </div>		
+        </div>
       </div>
       <div class="form-group">
         <label class="col-sm-2 control-label">Power</label>
@@ -40,17 +41,36 @@
           </div>
         </div>
         <label class="col-sm-2 control-label">Time</label>
-		<div class="col-sm-2">
-			<input type="text" class="form-control text-center" id="timeField" value="" disabled>
-		</div>
+        <div class="col-sm-2">
+          <input type="text" class="form-control text-center" id="timeField" value="" disabled>
+        </div>
       </div>
       <div class="form-group">
-        <label for="inputBrightness" class="col-sm-2 control-label">Brightness</label>
-        <div class="col-sm-6">
+        <label for="inputBrightnessLow" class="col-sm-2 control-label">Brightness</label>
+        <div class="col-sm-3">
           <div class="input-group">
-            <span class="input-group-addon" id="spanBrightness">128</span>
-            <input class="form-control" id="inputBrightness" type="range" step="1" min="0" max="255" />
+            <span class="input-group-addon" id="spanBrightnessLow">10</span>
+            <input class="form-control multi-range" id="inputBrightnessLow" type="range" step="10" min="0" max="100" />
           </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="input-group">
+            <input class="form-control multi-range" id="inputBrightnessHigh" type="range" step="10" min="10" max="100" />
+            <span class="input-group-addon" id="spanBrightnessHigh">100</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="inputSensorThreshold" class="col-sm-2 control-label">Daylight Threshold</label>
+        <div class="col-sm-4">
+          <div class="input-group">
+            <span class="input-group-addon" id="spanSensorThreshold">40</span>
+            <input class="form-control" id="inputSensorThreshold" type="range" step="1" min="10" max="1014" />
+          </div>
+        </div>
+        <label class="col-sm-1 control-label">Sensor</label>
+        <div class="col-sm-1">
+          <input type="text" class="form-control text-center" id="currentSensorField" value="" disabled>
         </div>
       </div>
       <div class="form-group">
@@ -71,33 +91,33 @@
             <div class="btn-group" role="group">
               <button type="button" class="btn btn-default btn-color" style="background: #FFFF00;" title="Yellow">&nbsp;</button>
             </div>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-color" style="background: #80FF00;" title="Chartreuse">&nbsp;</button>
-              </div>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-color" style="background: #00FF00;" title="Green">&nbsp;</button>
-              </div>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-color" style="background: #00FF80;" title="Spring Green">&nbsp;</button>
-              </div>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-color" style="background: #00FFFF;" title="Cyan">&nbsp;</button>
-              </div>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-color" style="background: #0080FF;" title="Azure">&nbsp;</button>
-              </div>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-color" style="background: #0000FF;" title="Blue">&nbsp;</button>
-              </div>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-color" style="background: #8000FF;" title="Violet">&nbsp;</button>
-              </div>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-color" style="background: #FF00FF;" title="Magenta">&nbsp;</button>
-              </div>
-              <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-color" style="background: #FF0080;" title="Rose">&nbsp;</button>
-              </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-color" style="background: #80FF00;" title="Chartreuse">&nbsp;</button>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-color" style="background: #00FF00;" title="Green">&nbsp;</button>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-color" style="background: #00FF80;" title="Spring Green">&nbsp;</button>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-color" style="background: #00FFFF;" title="Cyan">&nbsp;</button>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-color" style="background: #0080FF;" title="Azure">&nbsp;</button>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-color" style="background: #0000FF;" title="Blue">&nbsp;</button>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-color" style="background: #8000FF;" title="Violet">&nbsp;</button>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-color" style="background: #FF00FF;" title="Magenta">&nbsp;</button>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default btn-color" style="background: #FF0080;" title="Rose">&nbsp;</button>
+            </div>
           </div>
         </div>
       </div>
@@ -107,35 +127,40 @@
           <select disabled=true class="form-control" id="inputTimeServer"></select>
         </div>
       </div>
-      
-	  <div id="inputUserTimeGroup">
-        <label for="inputUserTime" class="col-sm-2 control-label">Time</label>
-        <div class="col-sm-6">
-          <div class="input-group clockpicker">
-            <input type="text" class="form-control" id="inputUserTime" value="">
-            <span class="input-group-addon" id="clockpickerInput">
+
+      <div class="form-group">
+        <div id="inputUserTimeGroup">
+          <label for="inputUserTime" class="col-sm-2 control-label">Time</label>
+          <div class="col-sm-6">
+            <div class="input-group clockpicker">
+              <input type="text" class="form-control" id="inputUserTime" value="">
+              <span class="input-group-addon" id="clockpickerInput">
                 <span class="glyphicon glyphicon-time"></span>
-            </span>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="form-group">
         <div class="col-sm-6 col-sm-offset-2">
-			<button type="button" id="btnManualTime" class="hidden" data-toggle="collapse" data-target="#inputUserTimeGroup">Set Time Manual</button>
+          <button type="button" id="btnManualTime" class="hidden" data-toggle="collapse" data-target="#inputUserTimeGroup">Set Time Manual</button>
+        </div>
+      </div>
+      <hr>
+      <div class="form-group">
+        <div class="col-sm-4 col-sm-offset-2">
+          <button id="btnResetWifi" type="button" class="btn btn-large btn-primary">Reset WiFi</button>
+        </div>
+        <div class="col-sm-4">
+          <button id="btnConfirmResetWifi" type="button" class="btn btn-large btn-danger hidden">Confirm Reset WiFi</button>
         </div>
       </div>
     </form>
   </div>
 
-  <script src="js/scripts.js"></script>        
+  <script type="text/javascript" src="js/jQuery.js"></script>
+  <script type="text/javascript" src="js/jQueryMiniColors.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
   <script type="text/javascript" src="js/clockpicker.min.js"></script>
-  <script type="text/javascript">
-	$('.clockpicker').clockpicker({
-		placement: 'bottom',
-		align: 'left',
-		autoclose: true,
-		'default': 'now'
-    });
-  </script>		
+  <script type="text/javascript" src="js/scripts.js"></script>
 </body>
+
 </html>

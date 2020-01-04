@@ -12,7 +12,7 @@ void resetAllLEDs()
 void setLEDs(int ledsToSet)
 {
   //CRGB ledColor = readColor();
-  RgbColor ledColor = readColor();
+  RgbColor ledColor = readColorWithBrightness();
   setLEDs(ledsToSet, ledColor);
 }
 

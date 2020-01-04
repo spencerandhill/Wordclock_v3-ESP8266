@@ -5,7 +5,6 @@ extern "C"
 
 #include <SoftwareSerial.h>
 #include <NeoPixelBrightnessBus.h>
-#include <Wire.h>
 #include <TimeLib.h>
 #include <NtpClientLib.h>
 
@@ -13,7 +12,7 @@ extern "C"
 #include <ESP8266WebServer.h>
 #include <FS.h>
 #include <EEPROM.h>
-#include <DNSServer.h>
+#include <ESP8266mDNS.h>
 
 #include "WiFiManager.h" //https://github.com/tzapu/WiFiManager
 
@@ -70,6 +69,9 @@ void setup()
   //Setup Webserver-Modul Stuff
   setupWebserver();
 
+  //Configure Brightness Sensor and calculate the values
+  setupBrightness();
+
   //Setup NTP Stuff for syncing time from the internet (this must be done after
   //Webserver initialization as the wifi connection isn't available earlier)
   setupNTP();
@@ -82,5 +84,5 @@ void loop()
 {
   loopWebserver(); //Check Webserver activities
   loopNTP();       //NTP Event Handling. This is NO sync-trigger, but the handling of NTP result (if available)
-  loopLED();       //Get Time from RTC Module and SET the related LED's
+  loopLED();       //Get Time and SET the related LED's
 }

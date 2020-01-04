@@ -2,21 +2,26 @@ int oldHour = 0;
 int oldMinute = 1;   //this is a different default-value than defined in main. => first hasTimeChanged-call returns true
 
 boolean hasTimeChanged() {
-  boolean result = false;
+  boolean timeHasChanged = false;
 
   int newHour = hour();
   int newMinute = minute();
 
   if (oldHour != newHour) {
-    result = true;
+    timeHasChanged = true;
     oldHour = newHour;
   }
 
   if (oldMinute != newMinute) {
-    result = true;
+    timeHasChanged = true;
     oldMinute = newMinute;
   }
-  return result;
+
+  if(timeHasChanged) {
+      Serial.println("Time has changed");
+  }
+
+  return timeHasChanged;
 }
 
 int receiveHour() {

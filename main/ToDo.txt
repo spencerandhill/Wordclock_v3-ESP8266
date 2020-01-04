@@ -1,2 +1,21 @@
 SSID/Password im EEPROM speichern => wifi_host_core
 -> DONE
+
+BRIGHTNESS Sensor Wert auslesen und verwursteln.
+    -> Bei Brightness-change wird ein "brightnessColor" Wert gespeichert
+    -> Bei Color-change wird ein ColorWert gespeichert UND ein brightnessColor Wert
+    -> Der "brightnessColor" Wert wird von den Strips ausgelesen
+    -> Der "normale" ColorWert wird vom Webserver ausgelesen
+    => Ergebnis: Ein Brightness-Change oder ColorChange triggert nur einmalig die Errechnung neuer Farbwerte der LED's
+        -Der Webserver zeigt weiterhin die korrekten Farben an
+        -Der Strip zeigt die Farbe mit Brightness an
+-> DONE
+
+Kalibrierung des Max-Wertes für die Helligkeit
+    -> Webinterface Button erstellen "Kalibrierung"
+        -> Der dann gelesene Mittelwert wird als "calibratedMaxBrightness" gespeichert
+        -> Berechnungsmethode: "1/BrightnessValue"
+    -> Den Wert im EPROM Speichern!
+    -> USER Brightness im Webinterface anpassen. Wertebereich : -255 <-> 255
+	
+-> DONE
