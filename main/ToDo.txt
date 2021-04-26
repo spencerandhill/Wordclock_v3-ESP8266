@@ -19,3 +19,6 @@ Kalibrierung des Max-Wertes für die Helligkeit
     -> USER Brightness im Webinterface anpassen. Wertebereich : -255 <-> 255
 	
 -> DONE
+
+Alexa Support zum ein und ausschalten der Uhr
+-> DONE

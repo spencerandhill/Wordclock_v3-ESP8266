@@ -7,6 +7,7 @@ extern "C"
 #include <NeoPixelBrightnessBus.h>
 #include <TimeLib.h>
 #include <NtpClientLib.h>
+#include "fauxmoESP.h"
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
@@ -76,6 +77,9 @@ void setup()
   //Webserver initialization as the wifi connection isn't available earlier)
   setupNTP();
 
+  //Setup Alexa Stuff
+  setupAlexa();
+
   //Setup LED-Modul Stuff
   delay(1000);
 }
@@ -83,6 +87,7 @@ void setup()
 void loop()
 {
   loopWebserver(); //Check Webserver activities
+  loopAlexa();     //Check the incoming Alexa commands
   loopNTP();       //NTP Event Handling. This is NO sync-trigger, but the handling of NTP result (if available)
   loopLED();       //Get Time and SET the related LED's
 }
