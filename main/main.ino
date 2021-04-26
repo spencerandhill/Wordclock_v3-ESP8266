@@ -7,6 +7,7 @@ extern "C"
 #include <NeoPixelBrightnessBus.h>
 #include <TimeLib.h>
 #include <NtpClientLib.h>
+#include <BH1750FVI.h>
 #include "fauxmoESP.h"
 
 #include <ESP8266WiFi.h>
