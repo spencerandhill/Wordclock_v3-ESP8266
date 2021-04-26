@@ -71,7 +71,7 @@ void setupWebserver(void)
   Serial.println("WiFi successful configured");
 
   //Start multiDNS (mDNS)
-  if (!MDNS.begin("word.clock")) {             // Start the mDNS responder for word.clock
+  if (!MDNS.begin("wordclock")) {             // Start the mDNS responder for wordclock.local
     Serial.println("Error setting up MDNS responder!");
   }
   Serial.println("mDNS responder started");
